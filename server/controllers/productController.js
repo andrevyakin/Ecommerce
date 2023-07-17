@@ -76,7 +76,7 @@ const productController = {
                 result: products.length,
                 products
             });
-        } catch (err) {
+        } catch (e) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."
@@ -120,7 +120,7 @@ const productController = {
 
             await newProduct.save();
             next(ApiResponse.created("Товар создан."));
-        } catch (err) {
+        } catch (e) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."
@@ -131,10 +131,11 @@ const productController = {
     deleteProduct: async (req, res, next) => {
         try {
             const product = await ProductModel.findById(req.params.id);
-            if (!product)
+            if (!product) {
                 return next(
                     ApiResponse.notFound("Запрашиваемый товар не найден.")
                 );
+            }
             const { images } = product;
             console.log(images);
             await deleteFileService(
@@ -142,7 +143,7 @@ const productController = {
             );
             await product.deleteOne();
             next(ApiResponse.ok("Товар удален."));
-        } catch (err) {
+        } catch (e) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."
@@ -159,7 +160,7 @@ const productController = {
                 );
             }
             const { images } = req.files;
-            let oldImages = oldProduct.images;
+            const oldImages = oldProduct.images;
             let newImages;
             if (images) {
                 if (
@@ -187,7 +188,7 @@ const productController = {
             );
 
             next(ApiResponse.ok("Товар обновлен."));
-        } catch (err) {
+        } catch (e) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."

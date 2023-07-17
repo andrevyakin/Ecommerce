@@ -4,5 +4,7 @@ export default function (err, req, res, next) {
     if (err instanceof ApiResponse) {
         return res.status(err.status).json({ message: err.message });
     }
-    return res.status(500).json({ message: "Внутренняя ошибка сервера." });
+    return res
+        .status(500)
+        .json({ message: "На сервере произошла ошибка. Попробуйте позже." });
 }

@@ -29,7 +29,7 @@ const categoryController = {
 
             await newCategory.save();
             next(ApiResponse.created("Категория создана."));
-        } catch (err) {
+        } catch (e) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."
@@ -69,7 +69,7 @@ const categoryController = {
             );
 
             next(ApiResponse.ok("Категория обновлена."));
-        } catch (err) {
+        } catch (e) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."

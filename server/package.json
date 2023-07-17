@@ -12,7 +12,8 @@
         "format:check": "prettier --check .",
         "format:write": "prettier --write .",
         "lint:check": "eslint .",
-        "lint:fix": "eslint --fix ."
+        "lint:fix": "eslint --fix .",
+        "client:lint:fix": "cd ../client && eslint --fix ."
     },
     "keywords": [],
     "author": "",

@@ -3,30 +3,13 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import TokenService from "../services/tokenService.js";
 import ApiResponse from "../services/ApiResponse.js";
-
-const authValidation = (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        res.status(400).json({
-            error: {
-                code: 400,
-                errors: errors
-                    .array()
-                    .map((error) => error.msg)
-                    .toString()
-                    .replace(",", ". ")
-            }
-        });
-        return false;
-    }
-    return true;
-};
+import authValidation from "../services/authValidation.js";
 
 const authController = {
-    signUp: async (req, res, next) => {
+    registration: async (req, res, next) => {
         try {
             if (!authValidation(req, res)) return;
-            const { email, password } = req.body;
+            const {name, email, password } = req.body;
 
             const exitingUser = await UserModel.findOne({ email });
 
@@ -49,7 +32,9 @@ const authController = {
             const tokens = tokenService.generate({ _id: newUser._id });
             await tokenService.save(newUser._id, tokens.refreshToken);
 
-            res.status(201).send({ ...tokens, userId: newUser._id });
+            console.log(newUser);
+
+            res.status(201).send({user: newUser, ...tokens });
         } catch (e) {
             next(
                 ApiResponse.internal(
@@ -59,12 +44,13 @@ const authController = {
         }
     },
 
-    signInWithPassword: async (req, res, next) => {
+    login: async (req, res, next) => {
         try {
             if (!authValidation(req, res)) return;
-            const { name, email, password } = req.body;
+            const { email, password } = req.body;
 
-            const existingUser = await UserModel.findOne({ name, email });
+            const existingUser = await UserModel.findOne({ email });
+            console.log("existingUser", existingUser);
 
             if (!existingUser) {
                 return next(
@@ -87,12 +73,11 @@ const authController = {
             const tokens = tokenService.generate({ _id: existingUser._id });
             await tokenService.save(existingUser._id, tokens.refreshToken);
 
-            res.status(200).send({ ...tokens, userId: existingUser._id });
+            res.status(200).send({ user: existingUser, ...tokens });
         } catch (e) {
-            console.log("Ошибка в signInWithPassword");
             next(
                 ApiResponse.internal(
-                    "На сервере произошла ошибка. Попробуйте позже"
+                    "На сервере произошла ошибка. Попробуйте позже."
                 )
             );
         }
@@ -125,7 +110,7 @@ const authController = {
         } catch (e) {
             next(
                 ApiResponse.internal(
-                    "На сервере произошла ошибка. Попробуйте позже"
+                    "На сервере произошла ошибка. Попробуйте позже."
                 )
             );
         }
