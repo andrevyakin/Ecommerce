@@ -15,6 +15,6 @@ router.post("/login", [
     check("password", "Пароль не может быть пустым").exists(),
     authController.login
 ]);
-router.post("/token", authController.token);
+router.get("/token", authController.token);
 
 export default router;

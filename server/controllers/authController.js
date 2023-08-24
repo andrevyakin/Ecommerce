@@ -9,7 +9,7 @@ const authController = {
     registration: async (req, res, next) => {
         try {
             if (!authValidation(req, res)) return;
-            const {name, email, password } = req.body;
+            const { name, email, password } = req.body;
 
             const exitingUser = await UserModel.findOne({ email });
 
@@ -32,9 +32,7 @@ const authController = {
             const tokens = tokenService.generate({ _id: newUser._id });
             await tokenService.save(newUser._id, tokens.refreshToken);
 
-            console.log(newUser);
-
-            res.status(201).send({user: newUser, ...tokens });
+            res.status(201).send({ user: newUser, ...tokens });
         } catch (e) {
             next(
                 ApiResponse.internal(
@@ -50,7 +48,6 @@ const authController = {
             const { email, password } = req.body;
 
             const existingUser = await UserModel.findOne({ email });
-            console.log("existingUser", existingUser);
 
             if (!existingUser) {
                 return next(

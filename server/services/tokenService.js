@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import TokenModel from "../models/TokenModel.js";
 
 class TokenService {
-    // return: accessToken, refreshToken, expiresIn
     generate(payload) {
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: "1h"

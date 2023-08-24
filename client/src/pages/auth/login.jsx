@@ -4,8 +4,8 @@ import FormContainer from "../../components/common/formContainer";
 import {REGISTRATION_ROUTE} from "../../utils/consts";
 import {useDispatch, useSelector} from "react-redux";
 import Loader from "../../components/common/loader";
-import {useLoginMutation} from "../../slices/usersApiSlice";
-import {setCredentials} from "../../slices/authSlice";
+import {useLoginMutation} from "../../slices/endpoints/userApiSlice";
+import {setCredentials} from "../../slices/reducers/authSlice";
 import {toast} from "react-toastify";
 
 const Login = () => {
@@ -23,7 +23,6 @@ const Login = () => {
             navigate("/");
         }
     }, [navigate, userInfo]);
-
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
@@ -39,7 +38,9 @@ const Login = () => {
             <h1 className="text-center">Войти</h1>
             <form onSubmit={submitHandler}>
                 <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
+                    <label htmlFor="email" className="form-label">
+                        Email
+                    </label>
                     <input
                         type="email"
                         placeholder="Введите email"
@@ -50,7 +51,9 @@ const Login = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Пароль</label>
+                    <label htmlFor="password" className="form-label">
+                        Пароль
+                    </label>
                     <input
                         type="password"
                         placeholder="Введите пароль"
@@ -60,16 +63,16 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <button
-                    type="submit"
-                    className="btn-primary mt-3"
-                >
+                <button type="submit" className="btn-primary mt-3">
                     Войти
                 </button>
                 <div className="row py-3">
                     <div className="col">
                         Не зарегистрированы?
-                        <Link className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover ms-2" to={REGISTRATION_ROUTE}>
+                        <Link
+                            className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover ms-2"
+                            to={REGISTRATION_ROUTE}
+                        >
                             Зарегистрируйтесь
                         </Link>
                     </div>

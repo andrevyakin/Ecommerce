@@ -1,10 +1,16 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {CART_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE} from "../utils/consts";
+import {
+    CART_ROUTE,
+    LOGIN_ROUTE,
+    PROFILE_ROUTE,
+    REGISTRATION_ROUTE,
+    SHOP_ROUTE
+} from "../utils/consts";
 import Icon from "./common/icon";
 import {useSelector, useDispatch} from "react-redux";
-import {useLogoutMutation} from "../slices/usersApiSlice";
-import {logout} from "../slices/authSlice";
+import {useLogoutMutation} from "../slices/endpoints/userApiSlice";
+import {logout} from "../slices/reducers/authSlice";
 import {toast} from "react-toastify";
 
 const Header = () => {
@@ -22,10 +28,11 @@ const Header = () => {
         try {
             await logoutApiCall().unwrap();
             dispatch(logout());
-            setIsAriaExpanded(false);
             navigate(LOGIN_ROUTE);
         } catch (err) {
             toast.error(err?.data?.message || err.error);
+        } finally {
+            setIsAriaExpanded(false);
         }
     };
     return (
@@ -64,39 +71,34 @@ const Header = () => {
                         color="RGBA(var(--bs-secondary-rgb)"
                         size={35}
                     />
-                    <span
-                        className="position-absolute top-50 start-60 translate-middle badge rounded-pill bg-success fs-7">
+                    <span className="position-absolute top-50 start-60 translate-middle badge rounded-pill bg-success fs-7">
                         2
                     </span>
                     <h3 className="d-inline-block ms-3">Корзина</h3>
                 </Link>
-                <form className="col">
-                    <Icon
-                        id="search"
-                        color="RGBA(var(--bs-secondary-rgb)"
-                        size={20}
-                    />
-                    <input
-                        type="search"
-                        name="search"
-                        placeholder="Поиск (по названию)"
-                        autoComplete="off"
-                    />
-                </form>
                 <div className="col d-flex justify-content-evenly">
                     {userInfo ? (
                         <div className="btn-group">
                             <button
                                 className="btn btn-secondary dropdown-toggle"
-                                onClick={() => setIsAriaExpanded(!isAriaExpanded)}
+                                onClick={() =>
+                                    setIsAriaExpanded(!isAriaExpanded)
+                                }
                             >
                                 {userInfo.user.name}
                             </button>
-                            <div className={"dropdown-menu mt-5" + (isAriaExpanded ? " show" : "")}>
+                            <div
+                                className={
+                                    "dropdown-menu mt-5" +
+                                    (isAriaExpanded ? " show" : "")
+                                }
+                            >
                                 <Link
                                     className="dropdown-item"
-                                    onClick={() => setIsAriaExpanded(!isAriaExpanded)}
-                                    to="/profile"
+                                    onClick={() =>
+                                        setIsAriaExpanded(!isAriaExpanded)
+                                    }
+                                    to={PROFILE_ROUTE}
                                 >
                                     Профиль
                                 </Link>
@@ -119,8 +121,13 @@ const Header = () => {
                                     addClassName="mb-1"
                                 />
                             </Link>
-                            <Link className="link-secondary mx-3" to={REGISTRATION_ROUTE}>
-                                <h3 className="d-inline-block me-1">Регистрация</h3>
+                            <Link
+                                className="link-secondary mx-3"
+                                to={REGISTRATION_ROUTE}
+                            >
+                                <h3 className="d-inline-block me-1">
+                                    Регистрация
+                                </h3>
                                 <Icon
                                     id="box-arrow-in-right"
                                     color="RGBA(var(--bs-secondary-rgb)"

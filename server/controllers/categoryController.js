@@ -15,6 +15,30 @@ const categoryController = {
             );
         }
     },
+    getCategoryById: async (req, res, next) => {
+        try {
+            const category = await CategoryModel.findOne(req.params.id);
+            res.json(category);
+        } catch (err) {
+            return next(
+                ApiResponse.internal(
+                    "На сервере произошла ошибка. Попробуйте позже."
+                )
+            );
+        }
+    },
+    getAllProductsByCategory: async (req, res, next) => {
+        try {
+            const products = await ProductModel.find({"category": Object(req.params.id)});
+            res.json(products);
+        } catch (err) {
+            return next(
+                ApiResponse.internal(
+                    "На сервере произошла ошибка. Попробуйте позже."
+                )
+            );
+        }
+    },
     createCategory: async (req, res, next) => {
         try {
             const { name } = req.body;
@@ -29,7 +53,7 @@ const categoryController = {
 
             await newCategory.save();
             next(ApiResponse.created("Категория создана."));
-        } catch (e) {
+        } catch (err) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."

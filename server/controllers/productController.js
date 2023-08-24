@@ -76,7 +76,7 @@ const productController = {
                 result: products.length,
                 products
             });
-        } catch (e) {
+        } catch (err) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."
@@ -120,7 +120,7 @@ const productController = {
 
             await newProduct.save();
             next(ApiResponse.created("Товар создан."));
-        } catch (e) {
+        } catch (err) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."
@@ -188,7 +188,7 @@ const productController = {
             );
 
             next(ApiResponse.ok("Товар обновлен."));
-        } catch (e) {
+        } catch (err) {
             return next(
                 ApiResponse.internal(
                     "На сервере произошла ошибка. Попробуйте позже."

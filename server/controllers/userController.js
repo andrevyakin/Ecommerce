@@ -26,7 +26,6 @@ const userController = {
             const user = await UserModel.findById(req.user._id);
             if (user) {
                 res.status(200).send({ user });
-
             } else {
                 return next(ApiResponse.notFound("Пользователь не найден."));
             }
@@ -49,7 +48,7 @@ const userController = {
                 user.email = req.body.email || user.email;
 
                 if (req.body.password) {
-                    user.password  = await bcrypt.hash(req.body.password, 12);
+                    user.password = await bcrypt.hash(req.body.password, 12);
                 }
 
                 const updatedUser = await user.save();

@@ -5,12 +5,15 @@ import auth from "../middleware/authMiddleware.js";
 const router = new Router();
 router
     .route("/")
-    .get(auth("admin"), categoryController.getCategories)
+    .get(categoryController.getCategories)
     .post(auth("admin"), categoryController.createCategory);
 
 router
     .route("/:id")
+    .get(categoryController.getCategoryById)
     .delete(auth("admin"), categoryController.deleteCategory)
     .put(auth("admin"), categoryController.updateCategory);
+
+router.route("/:id/products").get(categoryController.getAllProductsByCategory);
 
 export default router;

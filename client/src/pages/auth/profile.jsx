@@ -3,8 +3,8 @@ import {useDispatch, useSelector} from "react-redux";
 import FormContainer from "../../components/common/formContainer";
 import {toast} from "react-toastify";
 import Loader from "../../components/common/loader";
-import {useUpdateUserMutation} from "../../slices/usersApiSlice";
-import {setCredentials} from "../../slices/authSlice";
+import {useUpdateUserMutation} from "../../slices/endpoints/userApiSlice";
+import {setCredentials} from "../../slices/reducers/authSlice";
 import {useNavigate} from "react-router-dom";
 import {SHOP_ROUTE} from "../../utils/consts";
 
@@ -13,17 +13,15 @@ const Profile = () => {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const {userInfo} = useSelector((state) => state.auth);
 
     const [updateProfile, {isLoading}] = useUpdateUserMutation();
-
     useEffect(() => {
         setName(userInfo.user.name);
         setEmail(userInfo.user.email);
-    }, [userInfo.user.email, userInfo.user.name]);
+    }, []);
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -50,7 +48,9 @@ const Profile = () => {
             <h1 className="text-center">Обновите данные</h1>
             <form onSubmit={submitHandler}>
                 <div className="mb-3">
-                    <label htmlFor="login" className="form-label">Логин</label>
+                    <label htmlFor="login" className="form-label">
+                        Логин
+                    </label>
                     <input
                         type="text"
                         placeholder="Введите логин"
@@ -61,7 +61,9 @@ const Profile = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
+                    <label htmlFor="email" className="form-label">
+                        Email
+                    </label>
                     <input
                         type="email"
                         placeholder="Введите email"
@@ -72,7 +74,9 @@ const Profile = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Пароль</label>
+                    <label htmlFor="password" className="form-label">
+                        Пароль
+                    </label>
                     <input
                         type="password"
                         placeholder="Введите пароль"
@@ -83,7 +87,9 @@ const Profile = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="confirmPassword" className="form-label">Подтвердите пароль</label>
+                    <label htmlFor="confirmPassword" className="form-label">
+                        Подтвердите пароль
+                    </label>
                     <input
                         type="password"
                         placeholder="Подтвердите пароль"
@@ -94,10 +100,7 @@ const Profile = () => {
                     />
                 </div>
                 <div className="d-flex justify-content-evenly">
-                    <button
-                        type="submit"
-                        className="btn-primary mt-3"
-                    >
+                    <button type="submit" className="btn-primary mt-3">
                         Обновить
                     </button>
                     <button
@@ -111,7 +114,7 @@ const Profile = () => {
                     </button>
                 </div>
             </form>
-            {isLoading && <Loader/>}
+            {isLoading && <Loader />}
         </FormContainer>
     );
 };

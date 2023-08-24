@@ -1,33 +1,36 @@
-import {apiSlice} from "./apiSlice";
-const AUTH_URL = "/api/auth";
-const USER_URL = "/api/user";
+import {apiSlice} from "../apiSlice";
+import {
+    LOGON_URL,
+    LOGOUT_URL,
+    PROFILE_URL,
+    REGISTRATION_URL
+} from "../../utils/consts";
 
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (data) => ({
-                url: `${AUTH_URL}/login`,
+                url: LOGON_URL,
                 method: "POST",
                 body: data
             })
         }),
         logout: builder.mutation({
-            query: () => (
-                {
-                    url: `${USER_URL}/logout`,
-                    method: "POST"
-                })
+            query: () => ({
+                url: LOGOUT_URL,
+                method: "POST"
+            })
         }),
         register: builder.mutation({
             query: (data) => ({
-                url: `${AUTH_URL}/registration`,
+                url: REGISTRATION_URL,
                 method: "POST",
                 body: data
             })
         }),
         updateUser: builder.mutation({
             query: (data) => ({
-                url: `${USER_URL}/profile`,
+                url: PROFILE_URL,
                 method: "PUT",
                 body: data
             })

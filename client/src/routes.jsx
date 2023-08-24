@@ -1,12 +1,14 @@
 import {Navigate} from "react-router-dom";
-import {Admin, Cart, Shop, Product, Login, Registration} from "./pages";
+import {Admin, Cart, Shop, Login, Registration} from "./pages";
 import {
     ADMIN_ROUTE,
     CART_ROUTE,
     LOGIN_ROUTE,
-    PRODUCT_ROUTE, PROFILE_ROUTE,
+    PROFILE_ROUTE,
     REGISTRATION_ROUTE,
-    SHOP_ROUTE
+    SHOP_ROUTE,
+    CATEGORY_ROUTE,
+    PRODUCT_ROUTE
 } from "./utils/consts";
 import Profile from "./pages/auth/profile";
 
@@ -16,16 +18,40 @@ const router = (userRole) => [
         path: SHOP_ROUTE,
         element: <Shop />
     },
-    {
-        path: PRODUCT_ROUTE,
+    /*{
+        path: "/api",
         children: [
             {
-                path: "",
-                element: <Navigate to={SHOP_ROUTE} />
+                path: "product",
+                element: <Shop/>
+            }
+        ]
+    },*/
+    {
+        path: PRODUCT_ROUTE,
+        element: <Shop />
+        /*children: [
+            {
+                path: ":id",
+                search: "?category=id",
+                element: <Shop />
             },
             {
                 path: ":id",
                 element: <Product />
+            }
+        ]*/
+    },
+    {
+        path: CATEGORY_ROUTE,
+        children: [
+            /*{
+                path: "",
+                element: <Shop />
+            },*/
+            {
+                path: ":id",
+                element: <Shop />
             }
         ]
     },
@@ -48,11 +74,11 @@ const router = (userRole) => [
     {
         path: CART_ROUTE,
         element: userRole ? <Cart /> : <Navigate to={SHOP_ROUTE} />
-    },
-    {
+    }
+    /*{
         path: "*",
         element: <Navigate to={SHOP_ROUTE} />
-    }
+    }*/
 ];
 
 export default router;
