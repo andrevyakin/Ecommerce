@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {
+    ADMIN_ROUTE,
     CART_ROUTE,
     LOGIN_ROUTE,
     PROFILE_ROUTE,
@@ -75,6 +76,9 @@ const Header = () => {
                         2
                     </span>
                     <h3 className="d-inline-block ms-3">Корзина</h3>
+                </Link>
+                <Link className="link-secondary col" to={ADMIN_ROUTE}>
+                    <h3 className="d-inline-block">Админ панель</h3>
                 </Link>
                 <div className="col d-flex justify-content-evenly">
                     {userInfo ? (

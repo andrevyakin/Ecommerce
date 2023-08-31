@@ -1,6 +1,7 @@
 import CategoryModel from "../models/CategoryModel.js";
 import ProductModel from "../models/ProductModel.js";
 import ApiResponse from "../services/ApiResponse.js";
+import {ApiFeatures} from "./productController.js";
 
 const categoryController = {
     getCategories: async (req, res, next) => {
@@ -29,7 +30,7 @@ const categoryController = {
     },
     getAllProductsByCategory: async (req, res, next) => {
         try {
-            const products = await ProductModel.find({"category": Object(req.params.id)});
+            const products = await ProductModel.find({category: req.params.id}).populate("category").count();
             res.json(products);
         } catch (err) {
             return next(
@@ -52,6 +53,7 @@ const categoryController = {
             const newCategory = new CategoryModel({ name });
 
             await newCategory.save();
+            res.json(newCategory);
             next(ApiResponse.created("Категория создана."));
         } catch (err) {
             return next(

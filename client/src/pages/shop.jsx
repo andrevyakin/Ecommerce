@@ -1,28 +1,39 @@
 import Footer from "../components/footer";
 import Header from "../components/header";
-import ProductsList from "../components/productsList";
-import Categories from "../components/categories";
-import SearchBar from "../components/searchBar";
+import {Categories, ProductsList, SearchBar} from "../components/shop";
 
 const Shop = () => (
-    <div
-        className="container-fluid d-flex gap-2 flex-column overflow-y-auto vh-100 p-2 font-roboto bg-danger-subtle"
-        style={{minWidth: "320px"}}
-    >
-        <Header />
-        <SearchBar/>
-        <main className="d-flex flex-grow-1 justify-content-center">
-            <div className="row gap-2 flex-nowrap w-100 p-0">
-                <aside className="col-2 p-2 bg-light d-none d-sm-block">
-                    <Categories />
-                </aside>
-                <section className="col-10 p-2 flex-shrink-1 bg-primary-subtle">
-                    <ProductsList />
-                </section>
+    <>
+        <div className="top-0">
+            <div className="container ">
+                <div className="row">
+                    <header className="col-md-6 col-xl-12 order-md-1 order-xl-0">
+                        <Header />
+                    </header>
+                    <div className="col-md-6 col-xl-12 order-md-0 order-xl-1">
+                        <SearchBar />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <main>
+            <div className="container">
+                <div className="row">
+                    <nav className="col-xl-2">
+                        <Categories />
+                    </nav>
+                    <article className="col-md-12 col-xl-10">
+                        <ProductsList />
+                    </article>
+                </div>
             </div>
         </main>
-        <Footer />
-    </div>
+        <footer>
+            <div className="container">
+                <Footer />
+            </div>
+        </footer>
+    </>
 );
 
 export default Shop;

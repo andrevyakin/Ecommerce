@@ -16,11 +16,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
     if (result?.error?.status === 401 || result?.error?.status === 403) {
-        const refreshResult = await baseQuery(
-            "api/auth/token",
-            api,
-            extraOptions
-        );
+        const refreshResult = await baseQuery("/auth/token", api, extraOptions);
         if (refreshResult?.data) {
             const user = api.getState().auth.userInfo;
             api.dispatch(setCredentials({...refreshResult.data, user}));
@@ -35,6 +31,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
     reducerPath: "apiSlice",
     baseQuery: baseQueryWithReauth,
-    tagTypes: ["User", "Categories"],
+    tagTypes: ["User", "Categories", "Products"],
     endpoints: (builder) => ({})
 });

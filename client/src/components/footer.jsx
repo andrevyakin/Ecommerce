@@ -1,7 +1,7 @@
 import Icon from "./common/icon";
 
 const Footer = () => (
-    <footer className="bg-dark py-3">
+    <footer className="bg-dark mt-2 py-3">
         <div className="d-flex align-items-center">
             <div className="container text-center">
                 <span className="text-white-50">

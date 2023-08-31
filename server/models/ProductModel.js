@@ -13,15 +13,10 @@ const productSchema = new Schema(
             required: true
         },
         description: {
-            type: String,
-            required: true
-        },
-        content: {
             type: String
         },
         images: {
             type: String,
-            required: true
         },
         category: {
             type: Schema.Types.ObjectId,
@@ -34,7 +29,9 @@ const productSchema = new Schema(
         },
         sold: {
             type: Number,
-            default: 0
+            default: function() {
+                return Math.floor(Math.random()*10000)
+            }
         }
     },
     {

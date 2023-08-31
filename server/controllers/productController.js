@@ -4,13 +4,14 @@ import ProductModel from "../models/ProductModel.js";
 import CategoryModel from "../models/CategoryModel.js";
 import ApiResponse from "../services/ApiResponse.js";
 import deleteFileService from "../services/deleteFileService.js";
+import {statSync} from "fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Фильтрация, сортировка и пагинация (можно комбинировать или использовать отдельно)
 // todo Вынести в отдельный файл с middleware
 
-class ApiFeatures {
+export class ApiFeatures {
     constructor(query, queryString) {
         this.query = query;
         this.queryString = queryString;
@@ -54,7 +55,7 @@ class ApiFeatures {
 
     paginating() {
         const page = this.queryString.page * 1 || 1; // Отображаемая страница
-        const limit = this.queryString.limit * 1 || 9; // Количество элементов на странице
+        const limit = this.queryString.limit * 1 || 6; // Количество элементов на странице
         const skip = (page - 1) * limit;
         this.query = this.query.skip(skip).limit(limit);
         return this;
@@ -84,6 +85,22 @@ const productController = {
             );
         }
     },
+    getTotalProducts: async (req, res, next) => {
+        try {
+            const products = await ProductModel.find();
+            res.json({
+                status: "success",
+                result: products.length,
+                products
+            });
+        } catch (err) {
+            return next(
+                ApiResponse.internal(
+                    "На сервере произошла ошибка. Попробуйте позже."
+                )
+            );
+        }
+    },
     createProduct: async (req, res, next) => {
         try {
             const { title, category } = req.body;
@@ -91,19 +108,8 @@ const productController = {
             if (product) {
                 return next(ApiResponse.conflict("Этот товар уже существует."));
             }
-            const checkCategory = await CategoryModel.findOne({
-                _id: category
-            });
-            if (!checkCategory) {
-                return next(
-                    ApiResponse.notFound(
-                        "Указанная категория не найдена. Если категория новая - создайте сначала категорию."
-                    )
-                );
-            }
             const { images } = req.files;
-            // Делаю уникальное имя для изображения, чтобы не проверять на совпадения, когда их будет много.
-            // Изображения загружаю с компа.
+
             const fileName = images.md5 + path.extname(images.name);
             await images.mv(path.resolve(__dirname, "..", "static", fileName));
             if (!images) {
@@ -117,7 +123,6 @@ const productController = {
                 ...req.body,
                 images: fileName
             });
-
             await newProduct.save();
             next(ApiResponse.created("Товар создан."));
         } catch (err) {

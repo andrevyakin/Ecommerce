@@ -14,33 +14,13 @@ import Profile from "./pages/auth/profile";
 
 const router = (userRole) => [
     {
-        index: true,
+        //index: true,
         path: SHOP_ROUTE,
         element: <Shop />
     },
-    /*{
-        path: "/api",
-        children: [
-            {
-                path: "product",
-                element: <Shop/>
-            }
-        ]
-    },*/
     {
         path: PRODUCT_ROUTE,
         element: <Shop />
-        /*children: [
-            {
-                path: ":id",
-                search: "?category=id",
-                element: <Shop />
-            },
-            {
-                path: ":id",
-                element: <Product />
-            }
-        ]*/
     },
     {
         path: CATEGORY_ROUTE,

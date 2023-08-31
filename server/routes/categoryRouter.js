@@ -14,6 +14,6 @@ router
     .delete(auth("admin"), categoryController.deleteCategory)
     .put(auth("admin"), categoryController.updateCategory);
 
-router.route("/:id/products").get(categoryController.getAllProductsByCategory);
+router.route("/products/:id").get(categoryController.getAllProductsByCategory);
 
 export default router;

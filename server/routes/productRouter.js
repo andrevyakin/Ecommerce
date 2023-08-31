@@ -7,6 +7,7 @@ router
     .route("/")
     .get(ProductController.getProducts)
     .post(auth("admin"), ProductController.createProduct);
+router.route("/total").get(ProductController.getTotalProducts);
 
 router
     .route("/:id")
