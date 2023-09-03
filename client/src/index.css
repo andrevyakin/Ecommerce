@@ -1,0 +1,23 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+.font-roboto {
+    font-family: "Roboto", sans-serif;
+}
+
+body {
+    background-color: #fafafa;
+}
+
+.btn-outline-secondary:hover {
+    color: rgba(152, 34, 34, 0.63);
+}
+
+img {
+    width: 90px;
+    height: 90px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 6px;
+}
