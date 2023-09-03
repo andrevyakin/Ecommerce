@@ -67,7 +67,6 @@ const SearchBar = () => {
                 </label>
                 <select
                     className="form-select"
-                    aria-label="Default select example"
                     id="sort"
                     name="sort"
                     value={values.sort}
@@ -105,7 +104,6 @@ const SearchBar = () => {
                 </label>
                 <select
                     className="form-select me-2"
-                    aria-label="Default select example"
                     id="quantity"
                     name="quantity"
                     value={values.quantity}

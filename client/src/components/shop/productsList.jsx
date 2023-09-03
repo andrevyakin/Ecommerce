@@ -1,7 +1,9 @@
-import {Link, useLocation} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import Loader from "../common/loader";
 import {useGetProductQuery} from "../../slices/endpoints/shopApiSlice";
 import Pagination from "./pagination";
+import {PRODUCT_ROUTE_SINGLE} from "../../utils/consts";
+import useNavigateSearch from "../../hooks/useNavigateSearch";
 
 const ProductsList = () => {
     const {pathname, search} = useLocation();
@@ -12,6 +14,8 @@ const ProductsList = () => {
         isError,
         error
     } = useGetProductQuery(pathname + search);
+
+    const navigateSearch = useNavigateSearch();
 
     let content;
     if (isLoading) {
@@ -49,14 +53,14 @@ const ProductsList = () => {
                                                 {`Цена: ${price} руб.`}
                                             </p>
                                             <p className="card-text text-end">
-                                                <Link
+                                                <button
                                                     className="btn btn-outline-success btn-sm"
-                                                    to={`/product/${id}`}
+                                                    onClick={() => navigateSearch(PRODUCT_ROUTE_SINGLE, {_id: id})}
                                                 >
                                                     <small className="text-body-secondary">
                                                         Открыть карточку
                                                     </small>
-                                                </Link>
+                                                </button>
                                             </p>
                                         </div>
                                     </div>

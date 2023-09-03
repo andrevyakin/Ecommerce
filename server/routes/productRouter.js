@@ -7,11 +7,10 @@ router
     .route("/")
     .get(ProductController.getProducts)
     .post(auth("admin"), ProductController.createProduct);
-router.route("/total").get(ProductController.getTotalProducts);
+router.route("/edit").put(auth("admin"),ProductController.updateProduct);
 
 router
     .route("/:id")
-    .delete(auth("admin"), ProductController.deleteProduct)
-    .put(auth("admin"), ProductController.updateProduct);
+    .delete(auth("admin"), ProductController.deleteProduct);
 
 export default router;

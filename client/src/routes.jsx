@@ -1,5 +1,4 @@
-import {Navigate} from "react-router-dom";
-import {Admin, Cart, Shop, Login, Registration} from "./pages";
+import {Admin, Cart, Shop, Login, Registration, Product} from "./pages";
 import {
     ADMIN_ROUTE,
     CART_ROUTE,
@@ -8,52 +7,86 @@ import {
     REGISTRATION_ROUTE,
     SHOP_ROUTE,
     CATEGORY_ROUTE,
-    PRODUCT_ROUTE
+    PRODUCT_ROUTE, PRODUCT_EDIT_ROUTE, PRODUCT_ROUTE_SINGLE
 } from "./utils/consts";
 import Profile from "./pages/auth/profile";
+import EditProduct from "./components/admin/editProduct";
 
 const router = (userRole) => [
     {
         //index: true,
         path: SHOP_ROUTE,
-        element: <Shop />
+        element: <Shop/>
     },
     {
         path: PRODUCT_ROUTE,
-        element: <Shop />
+        element: <Shop/>,
+        children: [
+            {
+                path: ":id",
+                element: (userRole === "user" || userRole === "admin") ? <Product/> : <Shop/>
+            }
+        ]
+    },
+    {
+        path: PRODUCT_ROUTE_SINGLE,
+        element: <Product/>,
+        children: [
+            {
+                path: ":id",
+                element: (userRole === "user" || userRole === "admin") ? <Product/> : <Shop/>
+            }
+        ]
+    },
+    {
+        path: PRODUCT_EDIT_ROUTE,
+        children: [
+            {
+                path: ":id",
+                element: userRole === "admin" ? <EditProduct/> : <Shop/>
+            }
+        ]
     },
     {
         path: CATEGORY_ROUTE,
         children: [
-            /*{
-                path: "",
-                element: <Shop />
-            },*/
             {
                 path: ":id",
-                element: <Shop />
+                element: <Shop/>
             }
         ]
     },
     {
         path: LOGIN_ROUTE,
-        element: <Login />
+        element: <Login/>
     },
     {
         path: REGISTRATION_ROUTE,
-        element: <Registration />
+        element: <Registration/>
     },
     {
         path: PROFILE_ROUTE,
-        element: <Profile />
+        element: (userRole === "user" || userRole === "admin") ? <Profile/> : <Shop/>
     },
     {
         path: ADMIN_ROUTE,
-        element: userRole === "admin" ? <Admin /> : <Navigate to={SHOP_ROUTE} />
+        element: userRole === "admin" ? <Admin/> : <Shop/>,
+        children: [
+            {
+                path: ":id",
+                element: userRole === "admin" ? <EditProduct/> : <Shop/>
+            }
+        ]
     },
     {
         path: CART_ROUTE,
-        element: userRole ? <Cart /> : <Navigate to={SHOP_ROUTE} />
+        element: (userRole === "user" || userRole === "admin") ? <Cart/> : <Shop/>,
+        children: [
+            {
+                path: ":id",
+                element: (userRole === "user" || userRole === "admin") ? <Cart/> : <Shop/>
+            }
+        ]
     }
     /*{
         path: "*",

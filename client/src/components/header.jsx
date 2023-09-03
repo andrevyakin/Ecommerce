@@ -36,6 +36,9 @@ const Header = () => {
             setIsAriaExpanded(false);
         }
     };
+    const {cart} = useSelector(({userCart}) => userCart);
+    ;
+
     return (
         <nav className="navbar navbar-expand-lg row-cols-4 text-center bg-dark">
             <Link className="navbar-brand col link-secondary" to={SHOP_ROUTE}>
@@ -72,9 +75,11 @@ const Header = () => {
                         color="RGBA(var(--bs-secondary-rgb)"
                         size={35}
                     />
-                    <span className="position-absolute top-50 start-60 translate-middle badge rounded-pill bg-success fs-7">
-                        2
+                    {!!cart.length && (<span
+                        className="position-absolute top-50 start-60 translate-middle badge rounded-pill bg-success fs-7">
+                        {cart.length}
                     </span>
+                    )}
                     <h3 className="d-inline-block ms-3">Корзина</h3>
                 </Link>
                 <Link className="link-secondary col" to={ADMIN_ROUTE}>

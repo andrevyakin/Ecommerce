@@ -1,10 +1,11 @@
 import path from "path";
-import { fileURLToPath } from "url";
+import {fileURLToPath} from "url";
 import ProductModel from "../models/ProductModel.js";
 import CategoryModel from "../models/CategoryModel.js";
 import ApiResponse from "../services/ApiResponse.js";
 import deleteFileService from "../services/deleteFileService.js";
 import {statSync} from "fs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -18,7 +19,7 @@ export class ApiFeatures {
     }
 
     filtering() {
-        const queryObj = { ...this.queryString };
+        const queryObj = {...this.queryString};
 
         const excludedFields = ["page", "sort", "limit"];
         excludedFields.forEach((el) => delete queryObj[el]);
@@ -85,35 +86,21 @@ const productController = {
             );
         }
     },
-    getTotalProducts: async (req, res, next) => {
-        try {
-            const products = await ProductModel.find();
-            res.json({
-                status: "success",
-                result: products.length,
-                products
-            });
-        } catch (err) {
-            return next(
-                ApiResponse.internal(
-                    "На сервере произошла ошибка. Попробуйте позже."
-                )
-            );
-        }
-    },
     createProduct: async (req, res, next) => {
         try {
-            const { title, category } = req.body;
-            const product = await ProductModel.findOne({ title });
+            const {title} = req.body;
+            const product = await ProductModel.findOne({title});
             if (product) {
                 return next(ApiResponse.conflict("Этот товар уже существует."));
             }
-            const { images } = req.files;
-
-            const fileName = images.md5 + path.extname(images.name);
-            await images.mv(path.resolve(__dirname, "..", "static", fileName));
-            if (!images) {
-                return next(
+            const images = req.files?.images || null;
+            console.log(images);
+            let fileName = null;
+            if (images) {
+                fileName = images.md5 + path.extname(images.name);
+                await images.mv(path.resolve(__dirname, "..", "static", fileName));
+            } else {
+                next(
                     ApiResponse.unprocessable(
                         "Не удалось загрузить изображение."
                     )
@@ -141,12 +128,24 @@ const productController = {
                     ApiResponse.notFound("Запрашиваемый товар не найден.")
                 );
             }
-            const { images } = product;
-            console.log(images);
-            await deleteFileService(
-                path.resolve(__dirname, "..", "static", images)
-            );
-            await product.deleteOne();
+
+            const images = req.files?.images || null;
+            if (images) {
+                await deleteFileService(
+                    path.resolve(__dirname, "..", "static", images)
+                );
+            }
+
+            const categoryId = product.category._id;
+            const productsCount = await ProductModel.find({category: categoryId}).populate("category").count();
+            console.log(productsCount);
+            if (productsCount===1) {
+                await product.deleteOne();
+                await CategoryModel.findOneAndDelete({_id: categoryId});
+            } else {
+                await product.deleteOne();
+            }
+
             next(ApiResponse.ok("Товар удален."));
         } catch (e) {
             return next(
@@ -158,20 +157,20 @@ const productController = {
     },
     updateProduct: async (req, res, next) => {
         try {
-            const oldProduct = await ProductModel.findById(req.params.id);
+            const oldProduct = await ProductModel.findById(req.body._id);
             if (!oldProduct) {
                 return next(
                     ApiResponse.notFound("Запрашиваемый товар не найден.")
                 );
             }
-            const { images } = req.files;
-            const oldImages = oldProduct.images;
-            let newImages;
+            const images = req.files?.images || null;
+            const oldImages = oldProduct?.images || null;
+            let newImages = null;
             if (images) {
                 if (
                     path.basename(oldImages, path.extname(oldImages)) ===
-                    images.md5
-                ) {
+                    images.md5)
+                {
                     newImages = oldImages;
                 } else {
                     newImages = images.md5 + path.extname(images.name);
@@ -184,8 +183,7 @@ const productController = {
                 }
             }
 
-            await ProductModel.findByIdAndUpdate(
-                { _id: req.params.id },
+            await ProductModel.findByIdAndUpdate({_id: req.body._id},
                 {
                     ...req.body,
                     images: newImages

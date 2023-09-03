@@ -1,12 +1,9 @@
-import {
-    useGetProductsCountByCategoryQuery,
-    useGetProductsCountQuery
-} from "../../slices/endpoints/shopApiSlice";
 import Loader from "../common/loader";
 import {useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
 import useNavigateSearch from "../../hooks/useNavigateSearch";
-import {PRODUCT_ROUTE} from "../../utils/consts";
+import {PRODUCT_ROUTE, PRODUCT_URL, SHOP_ROUTE} from "../../utils/consts";
+import {useGetProductQuery, useGetProductsCountByCategoryQuery} from "../../slices/endpoints/shopApiSlice";
 
 const Pagination = () => {
     const {search} = useLocation();
@@ -35,27 +32,33 @@ const Pagination = () => {
                     .split("=")[1]
                 : ""
         );
+        if (search === SHOP_ROUTE) {
+            setProductsOnPage(6);
+        }
     }, [search]);
 
     const {
-        data: totalProducts,
+        data,
         isLoading,
         isSuccess
-    } = useGetProductsCountQuery();
+    } = useGetProductQuery(`${process.env.REACT_APP_API_URL}${PRODUCT_URL}?limit=Infinity`);
     const {data: productByCategoryCount} = useGetProductsCountByCategoryQuery(
         isCategoryId,
         {skip: !isCategoryId}
     );
 
     if (isSuccess) {
+        const totalProducts = data.products.length;
+
         const pagesCount =
             Math.ceil(productByCategoryCount / productsOnPage) ||
-            Math.ceil(totalProducts.result / productsOnPage);
+            Math.ceil(totalProducts / productsOnPage);
+
         if (pagesCount === 1 || search.includes("regex")) return;
 
         return (
             <>
-                {totalProducts.result && (
+                {totalProducts && (
                     <nav>
                         <ul className="pagination justify-content-center">
                             {Array(pagesCount)

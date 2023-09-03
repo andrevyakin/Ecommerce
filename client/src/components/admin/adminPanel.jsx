@@ -1,10 +1,10 @@
-import {
-    useGetCategoriesQuery,
-    useGetProductsCountQuery
-} from "../../slices/endpoints/shopApiSlice";
+import {useGetCategoriesQuery, useGetProductQuery} from "../../slices/endpoints/shopApiSlice";
 import Loader from "../common/loader";
 import Icon from "../common/icon";
-import {useRef, useState} from "react";
+import {PRODUCT_EDIT_ROUTE, PRODUCT_URL} from "../../utils/consts";
+import {useDeleteProductMutation} from "../../slices/endpoints/adminApiSlice";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 const AdminPanel = () => {
     const {
@@ -13,77 +13,35 @@ const AdminPanel = () => {
         isSuccess,
         isError,
         error
-    } = useGetProductsCountQuery();
+    } = useGetProductQuery(`${process.env.REACT_APP_API_URL}${PRODUCT_URL}?limit=Infinity`);
+
     const {
         data: categories,
         isLoading: isLoadingCategories,
         isSuccess: isSuccessCategories
     } = useGetCategoriesQuery();
 
+    const navigate = useNavigate();
+
+    const handleClickEditBtn = id => {
+        navigate(`${PRODUCT_EDIT_ROUTE}/${id}`);
+    };
+
+    const [deleteProduct] = useDeleteProductMutation();
+    const handleClickDeleteBtn = async id => {
+        try {
+            await deleteProduct(id);
+            toast.success("Товар удален.");
+        } catch (err) {
+            toast.error(err?.data?.message || err.error);
+        }
+    };
+
     let content;
     if (isLoading || isLoadingCategories) {
-        content = <Loader />;
+        content = <Loader/>;
     } else if (isSuccess && isSuccessCategories) {
-        const [products, setProducts] = useState(
-            productsList.products.map((i) => ({...i, isActive: false}))
-        );
-        const [values, setValues] = useState(
-            products.reduce((acc, el, i) => {
-                acc = {
-                    ...acc,
-                    ["inputId" + i]: "",
-                    ["inputName" + i]: "",
-                    ["inputDescription" + i]: "",
-                    ["selectCategory" + i]: "",
-                    ["inputCategory" + i]: "",
-                    ["inputPrice" + i]: "",
-                    ["inputSold" + i]: "",
-                    ["inputPhotoUrl" + i]: ""
-                };
-                return acc;
-            }, {})
-        );
-        const [inputPhotoEdit, setInputPhotoEdit] = useState(null);
-
-        const handleClickEditBtn = (id) => {
-            setProducts(
-                products.reduce((acc, i) => {
-                    i._id === id
-                        ? acc.push({...i, isActive: true})
-                        : acc.push({...i, isActive: false});
-                    return acc;
-                }, [])
-            );
-        };
-
-        const handleChangeFile = async (e) => {
-            try {
-                e.preventDefault();
-                setInputPhotoEdit(e.target.files[0]);
-                console.log(inputPhotoEdit);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-
-        const handleClickSaveBtn = () => {};
-
-        const handleClickDeleteBtn = (id) =>
-            setProducts(products.filter((product) => product._id !== id));
-
-        const categoryName = (name) => categories.find((i) => i._id === name);
-
-        const handleChange = (e) => {
-            e.preventDefault();
-            const {value, name} = e.target;
-            setValues((prev) => ({
-                ...prev,
-                [name]: value
-            }));
-        };
-
-        const inputFileRef = useRef(null);
-
+        const getNameCategory = id => categories.find(i => i._id === id);
         content = (
             <table className="table table-hover table-bordered border-primary mt-2">
                 <thead>
@@ -98,7 +56,7 @@ const AdminPanel = () => {
                         <th scope="col">Действия</th>
                     </tr>
                 </thead>
-                {products.map(
+                {productsList.products.map(
                     (
                         {
                             _id: id,
@@ -107,8 +65,7 @@ const AdminPanel = () => {
                             category,
                             price,
                             images,
-                            sold,
-                            isActive
+                            sold
                         },
                         i
                     ) => (
@@ -120,169 +77,86 @@ const AdminPanel = () => {
                                 >
                                     <input
                                         type="text"
-                                        className={`form-control ${
-                                            isActive ? "bg-primary-subtle" : ""
-                                        }`}
+                                        className="form-control"
                                         placeholder={id}
-                                        name={"inputId" + i}
                                         readOnly={true}
                                     />
                                 </th>
                                 <td>
                                     <input
                                         type="text"
-                                        className={`form-control ${
-                                            isActive ? "bg-primary-subtle" : ""
-                                        }`}
-                                        name={"inputName" + i}
+                                        className="form-control"
                                         placeholder={title}
-                                        onChange={handleChange}
-                                        value={values["inputName" + i]}
-                                        readOnly={!isActive}
+                                        readOnly={true}
                                     />
                                 </td>
                                 <td>
                                     <input
                                         type="text"
-                                        className={`form-control ${
-                                            isActive ? "bg-primary-subtle" : ""
-                                        }`}
-                                        name={"inputDescription" + i}
+                                        className="form-control"
                                         placeholder={description}
-                                        onChange={handleChange}
-                                        value={values["inputDescription" + i]}
-                                        readOnly={!isActive}
+                                        readOnly={true}
                                     />
                                 </td>
                                 <td>
-                                    {isActive && (
-                                        <select
-                                            className="form-control form-select bg-primary-subtle"
-                                            name={"selectCategory" + i}
-                                            value={values["selectCategory" + i]}
-                                            onChange={handleChange}
-                                        >
-                                            {categories.map((i) => (
-                                                <option
-                                                    key={i._id}
-                                                    value={i.name}
-                                                >
-                                                    {" "}
-                                                    {i.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    )}
-                                    {!isActive && (
-                                        <input
-                                            type={"text"}
-                                            className="form-control"
-                                            name={"inputCategory" + i}
-                                            placeholder={
-                                                categoryName(category).name
-                                            }
-                                            readOnly={true}
-                                        />
-                                    )}
+                                    <input
+                                        type={"text"}
+                                        className="form-control"
+                                        placeholder={
+                                            getNameCategory(category).name
+                                        }
+                                        readOnly={true}
+                                    />
                                 </td>
                                 <td>
                                     <input
                                         type="text"
-                                        className={`form-control ${
-                                            isActive ? "bg-primary-subtle" : ""
-                                        }`}
-                                        name={"inputPrice" + i}
+                                        className="form-control"
                                         placeholder={price}
-                                        onChange={handleChange}
-                                        value={values["inputPrice" + i]}
-                                        readOnly={!isActive}
+                                        readOnly={true}
                                     />
                                 </td>
                                 <td>
                                     <input
                                         type="text"
-                                        className={`form-control ${
-                                            isActive ? "bg-primary-subtle" : ""
-                                        }`}
-                                        name={"inputSold" + i}
+                                        className="form-control"
                                         placeholder={sold}
-                                        onChange={handleChange}
-                                        value={values["inputSold" + i]}
-                                        readOnly={!isActive}
+                                        readOnly={true}
                                     />
                                 </td>
-                                {isActive && (
-                                    <td>
-                                        <input
-                                            name="inputPhotoEdit"
-                                            type="file"
-                                            onChange={handleChangeFile}
-                                            hidden={true}
-                                            ref={inputFileRef}
-                                        />
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-secondary fw-bold bg-primary-subtle border-primary"
-                                            id="buttonPhotoEdit"
-                                            onClick={() =>
-                                                inputFileRef.current.click()
-                                            }
-                                        >
-                                            <div className="fw-bold">
-                                                Фото
-                                            </div>
-                                        </button>
-                                    </td>
-                                )}
-                                {!isActive && (
-                                    <td
-                                        abbr="true"
-                                        title={`${process.env.REACT_APP_API_URL}/${images}`}
-                                        className="initialism text-decoration-underline"
-                                    >
-                                        <input
-                                            type="text"
-                                            className={`form-control ${
-                                                isActive
-                                                    ? "bg-primary-subtle"
-                                                    : ""
-                                            }`}
-                                            name={"inputPhotoUrl" + i}
-                                            placeholder="URL"
-                                            onChange={handleChange}
-                                            value={values["inputPhotoUrl" + i]}
-                                            readOnly={true}
-                                        />
-                                    </td>
-                                )}
+                                <td
+                                    abbr="true"
+                                    title={`${process.env.REACT_APP_API_URL}/${images}`}
+                                    className="initialism text-decoration-underline"
+                                >
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name={"inputPhotoUrl"}
+                                        placeholder="URL"
+                                        value="URL"
+                                        readOnly={true}
+                                    />
+                                </td>
                                 <td>
                                     <div className=" btn-group" role="group">
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary text-bg-light"
-                                            onClick={(e) =>
-                                                handleClickEditBtn(id)
-                                            }
-                                        >
-                                            <Icon
-                                                id="brush"
-                                                color="RGBA(var(--bs-secondary-rgb)"
-                                                size={18}
-                                                addClassName="pb-1"
-                                            />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary text-bg-light"
-                                            onClick={handleClickSaveBtn}
-                                        >
-                                            <Icon
-                                                id="check-square"
-                                                color="RGBA(var(--bs-dark-rgb)"
-                                                size={20}
-                                                addClassName="pb-1"
-                                            />
-                                        </button>
+                                        <div className="addEmployee">
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary text-bg-light"
+                                                onClick={() =>
+                                                    handleClickEditBtn(id)
+                                                }
+                                            >
+                                                <Icon
+                                                    id="brush"
+                                                    color="RGBA(var(--bs-secondary-rgb)"
+                                                    size={18}
+                                                    addClassName="pb-1"
+                                                />
+                                            </button>
+
+                                        </div>
                                         <button
                                             type="button"
                                             className="btn btn-primary text-bg-light"
@@ -297,6 +171,7 @@ const AdminPanel = () => {
                                                 addClassName="pb-1"
                                             />
                                         </button>
+
                                     </div>
                                 </td>
                             </tr>
