@@ -10,8 +10,8 @@ const store = configureStore({
         userCart: userSlice
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(apiSlice.middleware),
-    devTools: true
+        getDefaultMiddleware().concat(apiSlice.middleware)
+    //devTools: false
 });
 
 export default store;

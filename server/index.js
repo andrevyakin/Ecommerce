@@ -25,17 +25,17 @@ app.use(
     })
 );
 app.use("/api", router);
-app.use(apiResponseMiddleware);
 
 if (process.env.NODE_ENV === "production") {
-    app.use("/", express.static(path.resolve(__dirname, "client")))
-
-    const indexPath = (path.resolve(__dirname, "client", index.html))
+    app.use("/", express.static(path.join(__dirname, "client")))
+    const indexPath = path.join(__dirname, "client", "index.html")
 
     app.get('*', (req, res) => {
-        res.sendFile(indexPath)
+        return res.sendFile(indexPath)
     });
 }
+
+app.use(apiResponseMiddleware);
 
 async function start() {
     try {
