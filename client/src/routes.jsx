@@ -7,14 +7,17 @@ import {
     REGISTRATION_ROUTE,
     SHOP_ROUTE,
     CATEGORY_ROUTE,
-    PRODUCT_ROUTE, PRODUCT_EDIT_ROUTE, PRODUCT_ROUTE_SINGLE
+    PRODUCT_ROUTE,
+    PRODUCT_EDIT_ROUTE,
+    PRODUCT_ROUTE_SINGLE
 } from "./utils/consts";
 import Profile from "./pages/auth/profile";
 import EditProduct from "./components/admin/editProduct";
+import {Navigate} from "react-router-dom";
 
 const router = (userRole) => [
     {
-        //index: true,
+        index: true,
         path: SHOP_ROUTE,
         element: <Shop/>
     },
@@ -66,32 +69,32 @@ const router = (userRole) => [
     },
     {
         path: PROFILE_ROUTE,
-        element: (userRole === "user" || userRole === "admin") ? <Profile/> : <Shop/>
+        element: (userRole === "user" || userRole === "admin") ? <Profile/> : <Navigate to={SHOP_ROUTE}/>
     },
     {
         path: ADMIN_ROUTE,
-        element: userRole === "admin" ? <Admin/> : <Shop/>,
+        element: userRole === "admin" ? <Admin/> : <Navigate to={SHOP_ROUTE}/>,
         children: [
             {
                 path: ":id",
-                element: userRole === "admin" ? <EditProduct/> : <Shop/>
+                element: userRole === "admin" ? <EditProduct/> : <Navigate to={SHOP_ROUTE}/>
             }
         ]
     },
     {
         path: CART_ROUTE,
-        element: (userRole === "user" || userRole === "admin") ? <Cart/> : <Shop/>,
+        element: (userRole === "user" || userRole === "admin") ? <Cart/> : <Navigate to={SHOP_ROUTE}/>,
         children: [
             {
                 path: ":id",
-                element: (userRole === "user" || userRole === "admin") ? <Cart/> : <Shop/>
+                element: (userRole === "user" || userRole === "admin") ? <Cart/> : <Navigate to={SHOP_ROUTE}/>
             }
         ]
-    }
-    /*{
+    },
+    {
         path: "*",
         element: <Navigate to={SHOP_ROUTE} />
-    }*/
+    }
 ];
 
 export default router;

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {
     ADMIN_ROUTE,
@@ -19,6 +19,10 @@ const Header = () => {
     const [isAriaExpanded, setIsAriaExpanded] = useState(false);
 
     const {userInfo} = useSelector((state) => state.auth);
+    const [userRole, setUserRole] = useState();
+    useEffect(() => {
+        setUserRole(userInfo?.user.role || undefined);
+    }, [userInfo]);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -29,7 +33,7 @@ const Header = () => {
         try {
             await logoutApiCall().unwrap();
             dispatch(logout());
-            navigate(LOGIN_ROUTE);
+            navigate(SHOP_ROUTE);
         } catch (err) {
             toast.error(err?.data?.message || err.error);
         } finally {
@@ -37,18 +41,18 @@ const Header = () => {
         }
     };
     const {cart} = useSelector(({userCart}) => userCart);
-    ;
 
     return (
         <nav className="navbar navbar-expand-lg row-cols-4 text-center bg-dark">
+
             <Link className="navbar-brand col link-secondary" to={SHOP_ROUTE}>
                 <Icon
-                    id="fire"
+                    id="bricks"
+                    addClassName="position-relative mb-4"
                     color="RGBA(var(--bs-secondary-rgb)"
-                    size={30}
-                    addClassName="mb-3 me-1"
+                    size={40}
                 />
-                <h3 className="d-inline-block">Всякая Всячина</h3>
+                <h3 className="d-inline-block ms-2">ЛАЙТ СТОУН КОМПАНИ</h3>
             </Link>
             <button
                 className="navbar-toggler bg-secondary me-2"
@@ -82,9 +86,9 @@ const Header = () => {
                     )}
                     <h3 className="d-inline-block ms-3">Корзина</h3>
                 </Link>
-                <Link className="link-secondary col" to={ADMIN_ROUTE}>
+                ({userRole === "admin" && <Link className="link-secondary col" to={ADMIN_ROUTE}>
                     <h3 className="d-inline-block">Админ панель</h3>
-                </Link>
+                </Link>})
                 <div className="col d-flex justify-content-evenly">
                     {userInfo ? (
                         <div className="btn-group">

@@ -4,11 +4,12 @@ import Loader from "../components/common/loader";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import Icon from "../components/common/icon";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {PRODUCT_ROUTE_SINGLE, PRODUCT_URL} from "../utils/consts";
 import useNavigateSearch from "../hooks/useNavigateSearch";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {addItemToCart} from "../slices/reducers/userSlice";
+import {toast} from "react-toastify";
 
 const Product = () => {
     const {pathname, search} = useLocation();
@@ -28,8 +29,20 @@ const Product = () => {
     } = useGetCategoriesQuery();
 
     const dispatch = useDispatch();
+
+    const {userInfo} = useSelector((state) => state.auth);
+    const [userRole, setUserRole] = useState();
+    useEffect(() => {
+        setUserRole(userInfo?.user.role || undefined);
+    }, [userInfo]);
+
+    //const elements = useRoutes(routes(userRole));
     const addToCart = () => {
-        dispatch(addItemToCart(productsList.products[0]));
+        if (!userRole) {
+            toast.error("Только авторизированные пользователи могут добавлять товар в корзину");
+        } else {
+            dispatch(addItemToCart(productsList.products[0]));
+        }
     };
 
     const navigateSearch = useNavigateSearch();
@@ -102,12 +115,12 @@ const Product = () => {
                         </div>
                         <div className="col-3 d-flex flex-column d-block justify-content-around">
                             <div className="d-flex flex-grow-1 flex-column justify-content-center">
-                                <button
+                                {!!userRole && <button
                                     className="btn btn-lg btn-outline-secondary fs-5 fw-bold mt-2 p-3 bg-success-subtle border border-primary-subtle rounded-3"
                                     onClick={addToCart}
                                 >
                                     Добавить в корзину
-                                </button>
+                                </button>}
                             </div>
                             <div className="d-flex flex-column justify-content-center">
                                 <small
