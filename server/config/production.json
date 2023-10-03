@@ -1,6 +1,7 @@
 {
-  "port": "http://89.223.31.62",
-  "mongoUri": "mongodb+srv://andrey:onttudtjb6Pt7sDG@cluster0.e46ehjb.mongodb.net/app?retryWrites=true&w=majority",
-  "accessSecret": "Секретный_акссесс_токен",
-  "refreshSecret": "Секретный_рефреш_токен"
+  "MONGO_URI": "mongodb+srv://andrey:onttudtjb6Pt7sDG@cluster0.e46ehjb.mongodb.net/app?retryWrites=true&w=majority",
+  "PORT": "8080",
+  "REFRESH_TOKEN_SECRET": "Секретный_рефреш_токен",
+  "ACCESS_TOKEN_SECRET": "Секретный_акссесс_токен",
+  "NODE_ENV": "production"
 }
