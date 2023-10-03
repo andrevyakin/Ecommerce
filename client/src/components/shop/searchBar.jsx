@@ -4,6 +4,7 @@ import {PRODUCT_ROUTE, SHOP_ROUTE} from "../../utils/consts";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 
+//Сделать адаптивность
 const SearchBar = () => {
     const [values, setValues] = useState({
         sort: "",
