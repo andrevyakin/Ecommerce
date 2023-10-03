@@ -1,5 +1,5 @@
 {
-  "port": 8080,
+  "port": "http://89.223.31.62",
   "mongoUri": "mongodb+srv://andrey:onttudtjb6Pt7sDG@cluster0.e46ehjb.mongodb.net/app?retryWrites=true&w=majority",
   "accessSecret": "Секретный_акссесс_токен",
   "refreshSecret": "Секретный_рефреш_токен"
