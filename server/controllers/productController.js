@@ -164,6 +164,7 @@ const productController = {
                 );
             }
             const images = req.files?.images || null;
+            console.log("Images", images);
             const oldImages = oldProduct?.images || null;
             let newImages = null;
             if (images) {
@@ -182,7 +183,7 @@ const productController = {
                     );
                 }
             }
-
+            console.log("newImages", newImages);
             await ProductModel.findByIdAndUpdate({_id: req.body._id},
                 {
                     ...req.body,
